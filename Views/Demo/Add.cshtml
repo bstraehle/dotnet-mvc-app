@@ -1,0 +1,28 @@
+﻿@model DemoApp.Models.Demo
+
+@{
+    ViewData["Title"] = "Add";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+<div class="col-md-4">
+<form asp-action="AddObject">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label asp-for="Id" class="control-label"></label>
+        <input asp-for="Id" class="form-control margin-bottom" type="number" min="1" value="" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control margin-bottom" maxlength="100" />
+    </div>
+    <input type="submit" value="Add" class="btn btn-primary margin-bottom" />
+</form>
+</div>
+</div>
+
+<div>
+<a asp-action="List">Back to List</a>
+</div>
