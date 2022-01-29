@@ -12,11 +12,11 @@
     @Html.AntiForgeryToken()
     <div class="form-group">
         <label asp-for="Id" class="control-label"></label>
-        <input asp-for="Id" class="form-control margin-bottom" type="number" min="1" value="" />
+        <input required asp-for="Id" class="form-control margin-bottom" type="number" min="1" value="" />
     </div>
     <div class="form-group">
         <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control margin-bottom" maxlength="100" />
+        <input required asp-for="Name" class="form-control margin-bottom" maxlength="50" />
     </div>
     <input type="submit" value="Add" class="btn btn-primary margin-bottom" />
 </form>

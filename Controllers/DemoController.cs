@@ -1,6 +1,7 @@
 ﻿using DemoApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net;
 using System.Text;
 
 namespace DemoApp.Controllers
@@ -22,24 +23,28 @@ namespace DemoApp.Controllers
         {
             await Console.Out.WriteLineAsync("List");
 
-            try
+            var client = new HttpClient();
+            var response = await client.GetAsync(new Uri(demoAPIhost + demoAPIapp)).ConfigureAwait(false);
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            if (response.StatusCode != HttpStatusCode.OK)
             {
-                var client = new HttpClient();
-                var response = await client.GetAsync(new Uri(demoAPIhost + demoAPIapp)).ConfigureAwait(false);
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var result = JsonConvert.DeserializeObject<List<Demo>>(content);
-                return View(result);
+                return View("Error", new ErrorViewModel { ExceptionMessage = content });
             }
-            catch (Exception ex)
-            {
-                return View("Error", new ErrorViewModel { ExceptionMessage = ex.Message });
-            }
+
+            return View(JsonConvert.DeserializeObject<List<Demo>>(content));
         }
 
         public async Task<IActionResult> View(int id)
         {
             return await GetAsync(id);
+        }
+
+        public IActionResult Add()
+        {
+            Console.Out.WriteLineAsync("Add");
+
+            return View(new Demo());
         }
 
         public async Task<IActionResult> Update(int id)
@@ -52,18 +57,23 @@ namespace DemoApp.Controllers
             return await GetAsync(id);
         }
 
-        public IActionResult Add()
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddObject(Demo demo)
         {
-            Console.Out.WriteLineAsync("Add");
+            await Console.Out.WriteLineAsync(string.Format("AddObject {0}", demo));
 
-            try
+            var content = new StringContent(JsonConvert.SerializeObject(demo), Encoding.UTF8, "application/json");
+
+            var client = new HttpClient();
+            var response = await client.PostAsync(new Uri(demoAPIhost + demoAPIapp), content).ConfigureAwait(false);
+
+            if (response.StatusCode != HttpStatusCode.OK)
             {
-                return View(new Demo());
+                var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return View("Error", new ErrorViewModel { ExceptionMessage = error });
             }
-            catch (Exception ex)
-            {
-                return View("Error", new ErrorViewModel { ExceptionMessage = ex.Message });
-            }
+
+            return RedirectToAction("List");
         }
 
         [ValidateAntiForgeryToken]
@@ -71,18 +81,18 @@ namespace DemoApp.Controllers
         {
             await Console.Out.WriteLineAsync(string.Format("UpdateObject {0}", demo));
 
-            try
+            var content = new StringContent(JsonConvert.SerializeObject(demo), Encoding.UTF8, "application/json");
+
+            var client = new HttpClient();
+            var response = await client.PutAsync(new Uri(demoAPIhost + demoAPIapp + "/" + demo.Id), content).ConfigureAwait(false);
+
+            if (response.StatusCode != HttpStatusCode.OK)
             {
-                var client = new HttpClient();
-                var content = new StringContent(JsonConvert.SerializeObject(demo), Encoding.UTF8, "application/json");
-                var response = await client.PutAsync(new Uri(demoAPIhost + demoAPIapp + "/" + demo.Id), content).ConfigureAwait(false);
-                response.EnsureSuccessStatusCode();
-                return RedirectToAction("List");
+                var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return View("Error", new ErrorViewModel { ExceptionMessage = error });
             }
-            catch (Exception ex)
-            {
-                return View("Error", new ErrorViewModel { ExceptionMessage = ex.Message });
-            }
+
+            return RedirectToAction("List");
         }
 
         [ValidateAntiForgeryToken]
@@ -90,54 +100,32 @@ namespace DemoApp.Controllers
         {
             await Console.Out.WriteLineAsync(string.Format("DeleteObject {0}", demo));
 
-            try
-            {
-                var client = new HttpClient();
-                var response = await client.DeleteAsync(new Uri(demoAPIhost + demoAPIapp + "/" + demo.Id)).ConfigureAwait(false);
-                response.EnsureSuccessStatusCode();
-                return RedirectToAction("List");
-            }
-            catch (Exception ex)
-            {
-                return View("Error", new ErrorViewModel { ExceptionMessage = ex.Message });
-            }
-        }
+            var client = new HttpClient();
+            var response = await client.DeleteAsync(new Uri(demoAPIhost + demoAPIapp + "/" + demo.Id)).ConfigureAwait(false);
 
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddObject(Demo demo)
-        {
-            await Console.Out.WriteLineAsync(string.Format("AddObject {0}", demo));
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return View("Error", new ErrorViewModel { ExceptionMessage = error });
+            }
 
-            try
-            {
-                var client = new HttpClient();
-                var content = new StringContent(JsonConvert.SerializeObject(demo), Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(new Uri(demoAPIhost + demoAPIapp), content).ConfigureAwait(false);
-                response.EnsureSuccessStatusCode();
-                return RedirectToAction("List");
-            }
-            catch (Exception ex)
-            {
-                return View("Error", new ErrorViewModel { ExceptionMessage = ex.Message });
-            }
+            return RedirectToAction("List");
         }
 
         private async Task<IActionResult> GetAsync(int id)
         {
             await Console.Out.WriteLineAsync(string.Format("Get Id=[{0}]", id));
 
-            try
+            var client = new HttpClient();
+            var response = await client.GetAsync(new Uri(demoAPIhost + demoAPIapp + "/" + id)).ConfigureAwait(false);
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            if (response.StatusCode != HttpStatusCode.OK)
             {
-                var client = new HttpClient();
-                var response = await client.GetAsync(new Uri(demoAPIhost + demoAPIapp + "/" + id)).ConfigureAwait(false);
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return View(JsonConvert.DeserializeObject<Demo>(content));
+                return View("Error", new ErrorViewModel { ExceptionMessage = content });
             }
-            catch (Exception ex)
-            {
-                return View("Error", new ErrorViewModel { ExceptionMessage = ex.Message });
-            }
+
+            return View(JsonConvert.DeserializeObject<Demo>(content));
         }
     }
 }
