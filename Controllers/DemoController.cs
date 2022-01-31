@@ -8,12 +8,18 @@ namespace DemoApp.Controllers
 {
     public class DemoController : Controller
     {
-        private string demoAPIhost;
-        private string demoAPIapp;
+        private string demoAPIhost = "";
+        private string demoAPIapp = "";
 
         public DemoController(IConfiguration config)
         {
-            demoAPIhost = config.GetValue("DemoAPIhost", "");
+            var host = Environment.GetEnvironmentVariable("DEMO_API_HOST");
+
+            if (host == null)
+            {
+                demoAPIhost = config.GetValue("DemoAPIhost", "");
+            }
+
             demoAPIapp = config.GetValue("DemoAPIapp", "");
 
             Console.Out.WriteLineAsync(string.Format("URI=[{0}{1}]", demoAPIhost, demoAPIapp));
