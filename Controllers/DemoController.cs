@@ -14,6 +14,12 @@ namespace DemoApp.Controllers
         public DemoController(IConfiguration config)
         {
             demoAPIhost = Environment.GetEnvironmentVariable("DEMO_API_HOST") ?? "";
+
+            if (string.IsNullOrEmpty(demoAPIhost))
+            {
+                demoAPIhost = config.GetValue("DemoAPIhost", "");
+            }
+
             demoAPIapp = config.GetValue("DemoAPIapp", "");
 
             Console.Out.WriteLineAsync(string.Format("URI=[{0}{1}]", demoAPIhost, demoAPIapp));
