@@ -9,18 +9,18 @@ namespace DemoApp.Controllers
     public class DemoController : Controller
     {
         private string demoAPIhost = "";
-        private string demoAPIapp = "";
+        private readonly string demoAPIapp = "/Demo";
 
         public DemoController(IConfiguration config)
         {
-            demoAPIhost = Environment.GetEnvironmentVariable("DEMO_API_HOST") ?? "";
+            var host = "DEMO_API_HOST";
+
+            demoAPIhost = Environment.GetEnvironmentVariable(host) ?? "";
 
             if (string.IsNullOrEmpty(demoAPIhost))
             {
-                demoAPIhost = config.GetValue("DemoAPIhost", "");
+                demoAPIhost = config.GetValue(host, "");
             }
-
-            demoAPIapp = config.GetValue("DemoAPIapp", "");
 
             Console.Out.WriteLineAsync(string.Format("URI=[{0}{1}]", demoAPIhost, demoAPIapp));
         }
@@ -66,7 +66,7 @@ namespace DemoApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddObject(Demo demo)
         {
-            await Console.Out.WriteLineAsync(string.Format("AddObject {0}", demo));
+            await Console.Out.WriteLineAsync(string.Format("Add Demo=[{0}]", demo));
 
             var content = new StringContent(JsonConvert.SerializeObject(demo), Encoding.UTF8, "application/json");
 
@@ -85,7 +85,7 @@ namespace DemoApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateObject(Demo demo)
         {
-            await Console.Out.WriteLineAsync(string.Format("UpdateObject {0}", demo));
+            await Console.Out.WriteLineAsync(string.Format("Update Demo=[{0}]", demo));
 
             var content = new StringContent(JsonConvert.SerializeObject(demo), Encoding.UTF8, "application/json");
 
@@ -104,7 +104,7 @@ namespace DemoApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteObject(Demo demo)
         {
-            await Console.Out.WriteLineAsync(string.Format("DeleteObject {0}", demo));
+            await Console.Out.WriteLineAsync(string.Format("Delete Demo=[{0}]", demo));
 
             var client = new HttpClient();
             var response = await client.DeleteAsync(new Uri(demoAPIhost + demoAPIapp + "/" + demo.Id)).ConfigureAwait(false);
