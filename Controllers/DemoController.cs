@@ -1,6 +1,7 @@
 ﻿using DemoApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Text;
 
@@ -35,7 +36,8 @@ namespace DemoApp.Controllers
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                return View("Error", new ErrorViewModel { ExceptionMessage = content });
+                dynamic data = JObject.Parse(content);
+                return View("Error", new ErrorViewModel { ExceptionMessage = data.Result });
             }
 
             return View(JsonConvert.DeserializeObject<List<Demo>>(content));
@@ -76,7 +78,8 @@ namespace DemoApp.Controllers
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return View("Error", new ErrorViewModel { ExceptionMessage = error });
+                dynamic data = JObject.Parse(error);
+                return View("Error", new ErrorViewModel { ExceptionMessage = data.Result });
             }
 
             return RedirectToAction("List");
@@ -95,7 +98,8 @@ namespace DemoApp.Controllers
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return View("Error", new ErrorViewModel { ExceptionMessage = error });
+                dynamic data = JObject.Parse(error);
+                return View("Error", new ErrorViewModel { ExceptionMessage = data.Result });
             }
 
             return RedirectToAction("List");
@@ -112,7 +116,8 @@ namespace DemoApp.Controllers
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 var error = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return View("Error", new ErrorViewModel { ExceptionMessage = error });
+                dynamic data = JObject.Parse(error);
+                return View("Error", new ErrorViewModel { ExceptionMessage = data.Result });
             }
 
             return RedirectToAction("List");
@@ -128,10 +133,16 @@ namespace DemoApp.Controllers
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                return View("Error", new ErrorViewModel { ExceptionMessage = content });
+                dynamic data = JObject.Parse(content);
+                return View("Error", new ErrorViewModel { ExceptionMessage = data.Result });
             }
 
             return View(JsonConvert.DeserializeObject<Demo>(content));
+        }
+
+        private string GetErrMsg(HttpResponseMessage response)
+        {
+            return "";
         }
     }
 }
