@@ -1,3 +1,5 @@
+Demo MVC app using demo REST API (???).  Implements CRUD operations via API calls.
+
 Build image and run container:  
 ```
 docker build -t mvcapp-image .  
