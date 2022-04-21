@@ -1,4 +1,4 @@
-Demo MVC app using demo REST API (https://github.com/bstraehle/dotnet-rest-api).  Implements CRUD operations via API calls.  
+Generic MVC app using generic REST API (https://github.com/bstraehle/dotnet-rest-api).  Implements CRUD operations via API calls.  
 
 Build image and run container:  
 ```
