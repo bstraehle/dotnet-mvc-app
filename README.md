@@ -3,7 +3,7 @@ Generic MVC app using generic REST API (https://github.com/bstraehle/dotnet-rest
 Build image and run container:  
 ```
 docker build -t mvcapp-image .  
-docker run --name mvcapp-container -d -p 8000:80 mvcapp-image  
+docker run --name mvcapp-container -d -p 8000:8080 mvcapp-image  
 ```
 URL:  
 ```
