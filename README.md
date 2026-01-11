@@ -16,3 +16,5 @@ docker push bstraehle/mvc-app:latest
 ```
 For Docker orchestration using this container, see https://github.com/bstraehle/docker  
 For Kubernetes orchestration using this container, see https://github.com/bstraehle/kubernetes  
+
+<!-- Dummy test change to verify PR workflow -->  
